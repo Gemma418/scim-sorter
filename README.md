@@ -8,16 +8,8 @@ From the project folder:
 
 ```bash
 npm install
-npm run dev -- --host 127.0.0.1
+npm run dev
 ```
-
-Then open:
-
-```text
-http://127.0.0.1:5173/
-```
-
-This host binding is required in this environment because the default `localhost` binding can fail with an IPv6 permission error on some local setups.
 
 ## Production build
 
