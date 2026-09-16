@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
 import {
   AlertTriangle,
+  ArrowLeft,
+  BookOpen,
   CircleX,
   ChevronDown,
   ChevronUp,
@@ -96,6 +98,51 @@ const DisabledAction = ({ text, children }: { text: string; children: React.Reac
     {children}
     <span className="disabled-action-bubble">{text}</span>
   </span>
+)
+
+const Instructions = ({ onBack }: { onBack: () => void }) => (
+  <div className="instructions-page">
+    <div className="instructions-header">
+      <div>
+        <p className="eyebrow">How it works</p>
+        <h2>Instructions</h2>
+      </div>
+    </div>
+
+    <div className="instructions-grid">
+      <section className="panel instructions-card">
+        <h3>1. Prepare your data in CSV format</h3>
+        <p>You have two options:</p>
+        <ul>Download a template example, copy your data into the template, then import</ul>
+        <ul>Import existing data if it already matches the required format</ul>
+        <p>Required columns:</p>
+        <code>number, name, home league, position, years playing, skill level</code>
+        <p>Positions must be jammer, pivot, or blocker. Skill is scored from 0 to 5.</p>
+      </section>
+
+      <section className="panel instructions-card">
+        <h3>2. Upload and choose a level</h3>
+        <p>Choose your CSV file, then select Rookie, Intermediate, or Advanced. Sort teams becomes available once both are selected.</p>
+        <ul>
+          <li>Rookie: skill 0-3, experience 0-1.</li>
+          <li>Intermediate: skill 1-4, experience 1-3.</li>
+          <li>Advanced: skill 4-5, with skill 3 allowed at experience 5, and experience 4-5.</li>
+        </ul>
+      </section>
+
+      <section className="panel instructions-card">
+        <h3>3. Review the result</h3>
+        <p>The app creates Team A, Team B, and a standby pool. It balances skill, experience, team size, roles, and jammer coverage where the roster allows.</p>
+        <p>Potential issues explain constraints that the available roster could not satisfy.</p>
+      </section>
+
+      <section className="panel instructions-card">
+        <h3>4. Adjust and export</h3>
+        <p>Edit team names directly in the team headers. Click Number, Position, Experience, or Skill in a table header to sort.</p>
+        <p>Download CSV exports the sorted teams, standby players, and your custom team names.</p>
+      </section>
+    </div>
+  </div>
 )
 
 type SortKey = 'number' | 'position' | 'skillLevel' | 'yearsPlaying'
@@ -207,6 +254,7 @@ const SkaterTable = ({ label, badgeClass, skaters, editable = false, onLabelChan
 }
 
 function App() {
+  const [view, setView] = useState<'sorter' | 'instructions'>('sorter')
   const [csvInput, setCsvInput] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [teamAName, setTeamAName] = useState('Team A')
@@ -338,7 +386,13 @@ function App() {
           <p className="eyebrow">Open-source scrim organiser</p>
           <h1>Organise your teams</h1>
         </div>
+        <button type="button" className="secondary-button instructions-button" onClick={() => setView(view === 'sorter' ? 'instructions' : 'sorter')}>
+          <BookOpen size={16} />
+          {view === 'sorter' ? 'Instructions' : 'Back to sorter'}
+        </button>
       </header>
+
+      {view === 'instructions' ? <Instructions onBack={() => setView('sorter')} /> : <>
 
       <section className="panel controls-panel">
         <div className="field-row file-row">
@@ -512,6 +566,7 @@ function App() {
           <p>Import csv data above to generate a balanced team split.</p>
         </section>
       )}
+      </>}
     </div>
   )
 }
